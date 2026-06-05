@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="dashboard">
+      <header class="dashboard__header">
+        <h1>Project Pulse</h1>
+        <p>Track active work, project owners, status, recent activity, and priority at a glance.</p>
+      </header>
+
+      <section class="dashboard__grid" id="project-grid" aria-live="polite"></section>
+    </main>
+
+    <script>
+      const projectGrid = document.getElementById("project-grid");
+      const requiredFields = ["name", "owner", "status", "recentActivity", "priority"];
+      const placeholder = "—";
+
+      function slugValue(value) {
+        return String(value || "")
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, "-") || "unknown";
+      }
+
+      function getField(project, fieldName, projectIndex) {
+        if (!Object.prototype.hasOwnProperty.call(project, fieldName) || project[fieldName] === null || project[fieldName] === "") {
+          console.warn(`Project ${projectIndex + 1} is missing required field "${fieldName}".`);
+          return placeholder;
+        }
+
+        return String(project[fieldName]);
+      }
+
+      function createTextElement(tagName, className, text) {
+        const element = document.createElement(tagName);
+        element.className = className;
+        element.textContent = text;
+        return element;
+      }
+
+      function showMessage(className, message, role) {
+        projectGrid.replaceChildren();
+
+        const messageElement = document.createElement("p");
+        messageElement.className = className;
+        messageElement.textContent = message;
+
+        if (role) {
+          messageElement.setAttribute("role", role);
+        }
+
+        projectGrid.appendChild(messageElement);
+      }
+
+      function renderProject(project, projectIndex) {
+        const name = getField(project, "name", projectIndex);
+        const owner = getField(project, "owner", projectIndex);
+        const status = getField(project, "status", projectIndex);
+        const recentActivity = getField(project, "recentActivity", projectIndex);
+        const priority = getField(project, "priority", projectIndex);
+        const statusSlug = slugValue(status);
+        const prioritySlug = slugValue(priority);
+
+        const card = document.createElement("article");
+        card.className = "project-card";
+        card.dataset.priority = prioritySlug;
+        card.dataset.status = statusSlug;
+
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "project-card__header";
+
+        const projectName = createTextElement("h2", "project-card__name", name);
+        const priorityPill = createTextElement("span", `priority-pill priority-pill--${prioritySlug}`, priority);
+
+        cardHeader.append(projectName, priorityPill);
+
+        const projectOwner = createTextElement("p", "project-card__owner", owner);
+
+        const projectStatus = document.createElement("p");
+        projectStatus.className = "project-card__status";
+        const statusBadge = createTextElement("span", `status-badge status-badge--${statusSlug}`, status);
+        projectStatus.appendChild(statusBadge);
+
+        const projectActivity = createTextElement("p", "project-card__activity", recentActivity);
+
+        card.append(cardHeader, projectOwner, projectStatus, projectActivity);
+
+        if (project.summary !== undefined && project.summary !== null && project.summary !== "") {
+          const projectSummary = createTextElement("p", "project-card__summary", String(project.summary));
+          card.appendChild(projectSummary);
+        }
+
+        return card;
+      }
+
+      function renderProjects(projects) {
+        projectGrid.replaceChildren();
+
+        if (projects.length === 0) {
+          showMessage("dashboard__empty", "No projects to show yet.");
+          return;
+        }
+
+        const fragment = document.createDocumentFragment();
+        projects.forEach((project, projectIndex) => {
+          fragment.appendChild(renderProject(project, projectIndex));
+        });
+
+        projectGrid.appendChild(fragment);
+      }
+
+      async function loadProjects() {
+        try {
+          const response = await fetch("./project-data.json");
+
+          if (!response.ok) {
+            throw new Error(`Project data request failed with status ${response.status}.`);
+          }
+
+          const data = await response.json();
+
+          if (!data || !Array.isArray(data.projects)) {
+            throw new Error("Project data must include a projects array.");
+          }
+
+          renderProjects(data.projects);
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            "dashboard__error",
+            "Couldn't load project data. Run the Run Project Pulse Dashboard launch config.",
+            "alert"
+          );
+        }
+      }
+
+      loadProjects();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,52 @@
+{
+  "projects": [
+    {
+      "name": "Contributor Welcome Flow",
+      "owner": "Mona",
+      "status": "On Track",
+      "recentActivity": "Refined onboarding checklist and paired first-time issues with maintainers.",
+      "priority": "high",
+      "summary": "Helps new contributors find a clear first step and connect with the right project guide."
+    },
+    {
+      "name": "Release Notes Refresh",
+      "owner": "Avery",
+      "status": "Planning",
+      "recentActivity": "Drafted the next milestone outline and gathered examples from recent releases.",
+      "priority": "medium",
+      "summary": "Improves how contributors understand what changed and where documentation help is needed."
+    },
+    {
+      "name": "Issue Triage Automation",
+      "owner": "Priya",
+      "status": "At Risk",
+      "recentActivity": "Label mapping is ready, but review rules still need maintainer approval.",
+      "priority": "high",
+      "summary": "Reduces manual triage work so maintainers can focus on coaching and code review."
+    },
+    {
+      "name": "Accessibility Audit",
+      "owner": "Jordan",
+      "status": "Blocked",
+      "recentActivity": "Waiting for updated design tokens before final contrast checks can continue.",
+      "priority": "medium",
+      "summary": "Tracks accessibility improvements and highlights where contributors can test key flows."
+    },
+    {
+      "name": "Community Metrics Snapshot",
+      "owner": "Sam",
+      "status": "Completed",
+      "recentActivity": "Published the monthly contributor activity summary and shared follow-up questions.",
+      "priority": "low",
+      "summary": "Gives the team a lightweight pulse on participation trends and support needs."
+    },
+    {
+      "name": "Documentation Garden",
+      "owner": "Lee",
+      "status": "On Track",
+      "recentActivity": "Merged three guide updates and opened a tracking issue for stale screenshots.",
+      "priority": "low",
+      "summary": "Keeps contributor-facing docs tidy, accurate, and easy to improve in small batches."
+    }
+  ]
+}
